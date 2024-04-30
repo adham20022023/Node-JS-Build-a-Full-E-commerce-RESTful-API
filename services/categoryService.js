@@ -1,13 +1,18 @@
-const CategoryModel = require('../models/categoryModel')
+const slugify = require("slugify");
+const CategoryModel = require("../models/categoryModel");
 exports.getCategories = async (req, res) => {
-    const name = req.body.name;
-    console.log(name)
-    const newCategory = new CategoryModel({ name });
-    newCategory.save().then((doc) => {
-        res.json(doc)
+  //get all categories
+  CategoryModel.find({}).then((categories) => {
+    res.status(200).json(categories);
+  });
+};
+exports.createCategories = async (req, res) => {
+  const name = req.body.name;
+  CategoryModel.create({ name, slug: slugify(name) })
+    .then((category) => {
+      res.status(200).json(category); // Removed the extra object syntax
     })
     .catch((err) => {
-        res.json(err)
-    })
-}
- 
+      res.status(400).json(err);
+    });
+};
